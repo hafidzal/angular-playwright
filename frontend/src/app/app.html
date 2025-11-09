@@ -1,35 +1,15 @@
-<!-- Statis -->
-<div class="bg-primary text-white p-4 rounded mb-4 text-center" data-testid="banner">
-  <h1 data-testid="banner-title">Project Trolley Scanner - Prototype UI</h1>
-  <p data-testid="banner-desc" class="mb-0">
-    Banner sederhana & gallery barang — klik gambar untuk lihat lebih besar
-  </p>
-</div>
 
-<!-- Dinamis -->
+<app-navbar></app-navbar>
+
 <div class="container">
-  <div class="row">
-    <div class="col-12 col-md-4 mb-4" *ngFor="let item of items; let i = index">
-      <div class="card h-100">
-        <img
-          [src]="item.src"
-          [alt]="item.name"
-          class="card-img-top"
-          (click)="openModal(i)"
-          [attr.data-testid]="'gallery-image-' + i"
-        >
-        <div class="card-body">
-          <h5 class="card-title">{{item.name}}</h5>
-          <p class="card-text">{{item.description}}</p>
-          <button
-            class="btn btn-outline-primary"
-            (click)="openModal(i)"
-            [attr.data-testid]="'open-btn-' + i"
-          >
-            Lihat
-          </button>
-        </div>
-      </div>
-    </div>
+  <app-kaiwa-card [kaiwa]="currentKaiwa"></app-kaiwa-card>
+  <div class="navigation-controls">
+    <button mat-icon-button (click)="previousKaiwa()" [disabled]="currentIndex === 0">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <span class="progress-indicator">{{ currentIndex + 1 }} / {{ kaiwaList.length }}</span>
+    <button mat-icon-button (click)="nextKaiwa()" [disabled]="currentIndex === kaiwaList.length - 1">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
   </div>
 </div>

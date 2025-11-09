@@ -1,0 +1,12 @@
+
+<div class="kaiwa-card">
+  <h3>{{ kaiwa?.situation }}</h3>
+  <div *ngFor="let line of kaiwa?.conversation" class="dialogue-block">
+    <strong>{{ line.speaker }}:</strong>
+    <div class="japanese">{{ line.japanese }}</div>
+    <div class="furigana">{{ line.furigana }}</div>
+    <div class="romaji">{{ line.romaji }}</div>
+    <div class="translation">{{ line.translation }}</div>
+  </div>
+  <button (click)="playAudio()" [disabled]="!kaiwa?.audioUrl">🔊</button>
+</div>

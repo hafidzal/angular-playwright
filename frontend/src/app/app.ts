@@ -1,44 +1,45 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { NgFor } from '@angular/common';
-
-interface Item {
-  name: string;
-  description: string;
-  src: string;
-  barcode?: string;
-}
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { KaiwaCardComponent } from './components/kaiwa-card/kaiwa-card.component';
+import { KaiwaEntry } from './models/kaiwa.interface';
+import { KaiwaService } from './services/kaiwa.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [NgFor],
+  imports: [CommonModule, NavbarComponent, KaiwaCardComponent, MatButtonModule, MatIconModule],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css']
 })
-export class App implements OnInit {
-  constructor() {}
+export class AppComponent {
+  currentIndex = 0;
+  kaiwaList: KaiwaEntry[] = [];
+
+  constructor(private kaiwaService: KaiwaService) {
+    this.kaiwaList = this.kaiwaService.getCurrentKaiwaList();
+  }
+
+  get currentKaiwa(): KaiwaEntry {
+    return this.kaiwaList[this.currentIndex];
+  }
+
+  previousKaiwa() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+    }
+  }
+
+  nextKaiwa() {
+    if (this.currentIndex < this.kaiwaList.length - 1) {
+      this.currentIndex++;
+    }
+  }
   
   ngOnInit(): void {
     // Initialize component here
   }
-  protected readonly title = signal('frontend');
 
-  items: Item[] = [
-    { name: 'Produk A', description: 'Deskripsi Produk A', src: 'https://picsum.photos/id/101/800/600', barcode: '123456789012' },
-    { name: 'Produk B', description: 'Deskripsi Produk B', src: 'https://picsum.photos/id/102/800/600', barcode: '223456789012' },
-    { name: 'Produk C', description: 'Deskripsi Produk C', src: 'https://picsum.photos/id/103/800/600', barcode: '323456789012' }
-  ];
-
-  modalOpen = false;
-  selectedItem: Item | null = null;
-
-  openModal(index: number) {
-    this.selectedItem = this.items[index];
-    this.modalOpen = true;
-  }
-
-  closeModal() {
-    this.modalOpen = false;
-    this.selectedItem = null;
-  }
 }

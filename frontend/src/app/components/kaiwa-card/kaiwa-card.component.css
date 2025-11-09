@@ -1,0 +1,35 @@
+
+.kaiwa-card {
+	max-width: 500px;
+	margin: 20px auto;
+	border: 1px solid #eee;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px #eee;
+	padding: 20px;
+	background: #fff;
+}
+.dialogue-block {
+	margin-bottom: 18px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid #f0f0f0;
+}
+.japanese {
+	font-size: 1.1em;
+	font-family: 'Noto Sans JP', sans-serif;
+}
+.furigana {
+	font-size: 0.9em;
+	color: #888;
+}
+.romaji {
+	font-size: 0.95em;
+	color: #888;
+	font-style: italic;
+}
+.translation {
+	color: #333;
+	margin-top: 3px;
+}
+button {
+	margin: 10px 5px 0 0;
+}
