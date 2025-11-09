@@ -30,6 +30,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/angular-playwright/",
               "budgets": [
                 {
                   "type": "initial",
