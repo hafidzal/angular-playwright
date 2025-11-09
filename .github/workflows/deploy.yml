@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  smoke-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -25,22 +25,134 @@ jobs:
         run: npx playwright install --with-deps
         working-directory: frontend
 
-      - name: Build Angular app
-        run: npm run build -- --output-path=dist
+      - name: Run smoke tests
+        run: npm run e2e:smoke
         working-directory: frontend
 
-      - name: Run Playwright tests
-        run: npm run e2e
-        continue-on-error: true
-        working-directory: frontend
-
-      - name: Upload test results
+      - name: Upload smoke test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: smoke-test-report
           path: frontend/playwright-report
           retention-days: 30
+
+  feature-tests:
+    needs: smoke-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+        working-directory: frontend
+
+      - name: Run feature tests
+        run: npm run e2e:feature
+        working-directory: frontend
+
+      - name: Upload feature test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: feature-test-report
+          path: frontend/playwright-report
+          retention-days: 30
+
+  integration-tests:
+    needs: feature-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+        working-directory: frontend
+
+      - name: Run integration tests
+        run: npm run e2e:integration
+        working-directory: frontend
+
+      - name: Upload integration test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-report
+          path: frontend/playwright-report
+          retention-days: 30
+
+  regression-tests:
+    needs: integration-tests
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+        working-directory: frontend
+
+      - name: Run regression tests
+        run: npm run e2e:regression
+        working-directory: frontend
+
+      - name: Upload regression test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-test-report
+          path: frontend/playwright-report
+          retention-days: 30
+
+  build-and-deploy:
+    needs: [smoke-tests, feature-tests, integration-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build Angular app
+        run: npm run build -- --output-path=dist
+        working-directory: frontend
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
